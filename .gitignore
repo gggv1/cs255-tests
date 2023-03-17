@@ -1,0 +1,16 @@
+# macos ds_store file
+.DS_Store
+
+# C
+*.o
+
+# executables
+*.exe
+*.out
+*.app
+ 
+# vscode
+.vscode
+
+# vim
+*.swp
