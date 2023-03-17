@@ -1,3 +1,11 @@
+/*
+  * test.c
+  * Author: Alexandros Antonakakis <csd4802>
+  * Date:   16/03/2023
+  * Description: This file contains the test cases for assignment 2, "A String Module".
+*/
+
+
 #include <assert.h>
 #include <pthread.h>
 #include <stdlib.h>
@@ -5,7 +13,7 @@
 #include "mystring.h"
 #include "simpletest.h"
 
-/* re - implement assert fail to just print a message and exit */
+/* re-implement assert fail to just print a message and exit the thread only */
 #if __APPLE__
 void __assert_rtn(__attribute__((unused)) const char *assertion,
                   __attribute__((unused)) const char *file,
@@ -15,7 +23,7 @@ void __assert_rtn(__attribute__((unused)) const char *assertion,
   TEST_PRINT_CURRENT_STATS();
   fprintf(stderr, "%s\n", "----------------------------------------");
   pthread_exit(
-      NULL);  // instead of exiting the whole process we exit the thread
+      NULL);  /* instead of exiting the whole process we exit the thread */
 }
 #endif
 
@@ -27,7 +35,7 @@ void __assert_fail(__attribute__((unused)) const char  *assertion,
   TEST_ASSERT(1);
   fprintf(stderr, "%s\n", "----------------------------------------");
   pthread_exit(
-      NULL);  // instead of exiting the whole process we exit the thread
+      NULL);  /* instead of exiting the whole process we exit the thread */
 }
 #endif
 
@@ -116,12 +124,13 @@ void *test_ncpy(void *arg) {
   char dest[SIZE];
 
   TEST_ASSERT_EQUAL_STRING(ms_ncopy(dest, "hello", 6), "hello");
+  TEST_ASSERT_EQUAL_STRING(ms_ncopy(dest, "fr", 2), "frllo");
 
-  memset(dest, -1, SIZE);  // reset dest
+  memset(dest, -1, SIZE);  /* reset dest */
   ms_ncopy(dest, "a", 10);
-  TEST_ASSERT_EQUAL(dest[5], 0);  // check if dest is null terminated
+  TEST_ASSERT_EQUAL(dest[5], 0);  /* check if for the remaining of n (9), null bytes are added*/
   ms_ncopy(dest, "hello", 0);
-  TEST_ASSERT_EQUAL_STRING(ms_ncopy(dest, "hello", 0), "a");  // check if n = 0
+  TEST_ASSERT_EQUAL_STRING(ms_ncopy(dest, "hello", 0), "a");  /* check if n = 0 */
 
   ms_ncopy(NULL, NULL, 0); /* assertion failed */
 
@@ -154,7 +163,7 @@ void *test_ncat(void *arg) {
   char src[SIZE]  = " world";
   char dest[SIZE] = "hello";
 
-  memset(dest + 6, -1, SIZE - 6);  // -1 the rest of dest
+  memset(dest + 6, -1, SIZE - 6); /* -1 the rest of dest */
 
   TEST_ASSERT_EQUAL_STRING(ms_nconcat(dest, src, 6), "hello world");
   TEST_ASSERT_EQUAL_STRING(ms_nconcat(dest, "", 0), "hello world");
@@ -184,13 +193,15 @@ void *test_search(void *arg) {
 }
 
 /* array of function pointers for each test case */
+/* we will use this to iterate over all test cases */
+/* if you wish to add a test case, append it on the array below */
 void *(*tests[])(void *) = {test_length, test_cmp, test_ncmp, test_copy,
                             test_ncpy,   test_cat, test_ncat, test_search};
 
 int main(void) {
   /* Due to the nature of assert (it aborts after failure), we can't test
-   * assertions the easy way */
-  /* We will use and recycle one thread for each assertion */
+   * assertions the easy way, since we have to stop normal execution */
+  /* We will use one thread for each assertion */
 
   for (size_t i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
     pthread_t tid;
