@@ -4,14 +4,14 @@ LDFLAGS := -ldl
 INCLUDE := -I./malloc-allocation-tracker/include
 LIB := libmallocwrap.a
 
-list: malloc_wrapper compile_list tests/test.c
-	$(CC) $(CFLAGS) $(INCLUDE) tests/test.c $(LIB) symtablelist.o -o list.exe $(LDFLAGS)
+list: malloc_wrapper compile_list compile_test
+	$(CC) $(CFLAGS) $(INCLUDE) test.o $(LIB) symtablelist.o -o list.exe $(LDFLAGS)
 
 compile_list: tests/symtablelist.c tests/symtable.h
 	$(CC) $(CFLAGS) -ansi $(INCLUDE) -c tests/symtablelist.c
 
-hash: malloc_wrapper compile_hash tests/test.c
-	$(CC) $(CFLAGS) $(INCLUDE) $(LIB) tests/test.c symtablehash.o -o hash.exe $(LDFLAGS)
+hash: malloc_wrapper compile_hash compile_test
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIB) test.o symtablehash.o -o hash.exe $(LDFLAGS)
 
 compile_hash:
 	$(CC) $(CFLAGS) -ansi $(INCLUDE) -c tests/symtablehash.c
@@ -19,6 +19,9 @@ compile_hash:
 malloc_wrapper:
 	$(MAKE) -C malloc-allocation-tracker/
 	mv malloc-allocation-tracker/libmallocwrap.a .
+
+compile_test: tests/test.c
+	$(CC) $(CFLGAS) tests/test.c
 
 clean: 
 	rm -f *.exe
