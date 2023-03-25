@@ -5,13 +5,13 @@ INCLUDE := -I./malloc-allocation-tracker/include
 LIB := libmallocwrap.a
 
 list: malloc_wrapper compile_list tests/test.c
-	$(CC) $(CFLAGS) $(INCLUDE) $(LIB) tests/symtablelist.c tests/test.c -o list.exe $(LDFLAGS)
+	$(CC) $(CFLAGS) $(INCLUDE) tests/test.c $(LIB) symtablelist.o -o list.exe $(LDFLAGS)
 
 compile_list: tests/symtablelist.c tests/symtable.h
 	$(CC) $(CFLAGS) -ansi $(INCLUDE) -c tests/symtablelist.c
 
 hash: malloc_wrapper compile_hash tests/test.c
-	$(CC) $(CFLAGS) $(INCLUDE) $(LIB) tests/symtablehash.c tests/test.c -o hash.exe $(LDFLAGS)
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIB) tests/test.c symtablehash.o -o hash.exe $(LDFLAGS)
 
 compile_hash:
 	$(CC) $(CFLAGS) -ansi $(INCLUDE) -c tests/symtablehash.c
