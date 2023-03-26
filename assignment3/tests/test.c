@@ -31,9 +31,8 @@ void check_leaks(void) {
   }
 
   alloc_list *leaks = allocs;
-  void *MEMCHECK = NULL;
 
-  TEST_ASSERT(MEMCHECK);
+  TEST_ASSERT(leaks != NULL);
 
   fprintf(stderr, "\n\n");
 
