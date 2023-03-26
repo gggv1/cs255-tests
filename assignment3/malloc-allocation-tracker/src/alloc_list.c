@@ -40,6 +40,7 @@ SOFTWARE.
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <unistd.h>
 
 /* define a global allocs list variable */
 
@@ -66,10 +67,7 @@ alloc_list *alloc_list_add(alloc_list *list, void *ptr, size_t size) {
   new->size = size;
 
   /* get the current stack_trace */
-  void *s[256];
-  new->stack_frames = backtrace(s, 256);
-  new->stack_trace  = backtrace_symbols(s, new->stack_frames);
-
+  new->frames = backtrace(new->stack_frames, 256);
   return new;
 }
 
@@ -133,7 +131,5 @@ void print_active_allocations(alloc_list *list) {
 }
 
 void print_stack_trace(alloc_list *list) {
-    for (int i = 2; i < list->stack_frames - 1; i++) {
-      fprintf(stderr, "%s\n", list->stack_trace[i]);
-    }
+  backtrace_symbols_fd(list->stack_frames, list->frames, STDOUT_FILENO);
 }

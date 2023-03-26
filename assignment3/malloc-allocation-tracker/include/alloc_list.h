@@ -39,8 +39,8 @@ typedef struct alloc_list {
   void  *ptr;  /* returned malloc address */
   size_t size; /* size allocated */
 
-  char **stack_trace;
-  int stack_frames;
+  void *stack_frames;
+  int frames;
 
   struct alloc_list *next;
 } alloc_list;
