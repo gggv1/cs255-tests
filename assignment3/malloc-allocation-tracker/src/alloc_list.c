@@ -124,12 +124,8 @@ int is_alloc_list_empty(alloc_list *list) {
 void print_active_allocations(alloc_list *list) {
   while (list) {
     fprintf(stderr, "%p with size: %zu bytes\n", list->ptr, list->size);
-    print_stack_trace(list);
     fprintf(stderr, "--------------------------------------------\n");
     list = list->next;
   }
 }
 
-void print_stack_trace(alloc_list *list) {
-  backtrace_symbols_fd(list->stack_frames, list->frames, STDOUT_FILENO);
-}
