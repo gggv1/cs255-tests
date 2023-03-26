@@ -66,8 +66,6 @@ alloc_list *alloc_list_add(alloc_list *list, void *ptr, size_t size) {
   new->next = list;
   new->size = size;
 
-  /* get the current stack_trace */
-  new->frames = backtrace(new->stack_frames, 256);
   return new;
 }
 
@@ -95,8 +93,6 @@ alloc_list *alloc_list_remove(alloc_list *list, void *ptr) {
     exit(EXIT_FAILURE);
   }
 
-  // free(cur->stack_trace); /* this was probably malloced */
-
   return list;
 }
 
@@ -112,7 +108,6 @@ void alloc_list_destroy(alloc_list *list) {
               __func__);
       exit(EXIT_FAILURE);
     }
-    // free(cur->stack_trace); /* this was probably malloced */
     cur = next;
   }
 }
