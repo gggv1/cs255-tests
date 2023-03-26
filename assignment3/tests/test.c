@@ -55,6 +55,10 @@ void check_leaks(void) {
     }
     fprintf(stderr, "\n\n");
 
+    fprintf(stderr, "stack trace:\n");
+    print_stack_trace(leaks);
+    fprintf(stderr, "\n\n");
+
     leaks = leaks->next;
   }
 }

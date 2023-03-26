@@ -34,6 +34,7 @@ SOFTWARE.
 #include "alloc_list.h"
 
 #include <errno.h>
+#include <execinfo.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,6 +64,12 @@ alloc_list *alloc_list_add(alloc_list *list, void *ptr, size_t size) {
   new->ptr  = ptr;
   new->next = list;
   new->size = size;
+
+  /* get the current stack_trace */
+  void *s[256];
+  new->stack_frames = backtrace(s, 256);
+  new->stack_trace  = backtrace_symbols(s, new->stack_frames);
+
   return new;
 }
 
@@ -90,6 +97,8 @@ alloc_list *alloc_list_remove(alloc_list *list, void *ptr) {
     exit(EXIT_FAILURE);
   }
 
+  // free(cur->stack_trace); /* this was probably malloced */
+
   return list;
 }
 
@@ -105,6 +114,7 @@ void alloc_list_destroy(alloc_list *list) {
               __func__);
       exit(EXIT_FAILURE);
     }
+    // free(cur->stack_trace); /* this was probably malloced */
     cur = next;
   }
 }
@@ -116,7 +126,14 @@ int is_alloc_list_empty(alloc_list *list) {
 void print_active_allocations(alloc_list *list) {
   while (list) {
     fprintf(stderr, "%p with size: %zu bytes\n", list->ptr, list->size);
+    print_stack_trace(list);
     fprintf(stderr, "--------------------------------------------\n");
     list = list->next;
   }
+}
+
+void print_stack_trace(alloc_list *list) {
+    for (int i = 2; i < list->stack_frames - 1; i++) {
+      fprintf(stderr, "%s\n", list->stack_trace[i]);
+    }
 }
